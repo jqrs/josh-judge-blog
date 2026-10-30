@@ -5,4 +5,5 @@ permalink: /sitemap.xml
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url><loc>{{ site.url }}/</loc></url>
 {% for post in collections.posts %}<url><loc>{{ site.url }}{{ post.url }}</loc><lastmod>{{ post.date | isoDate }}</lastmod></url>{% endfor %}
+{% for item in collections.page %}{% if not item.data.draft and not item.data.noindex %}<url><loc>{{ site.url }}{{ item.url }}</loc></url>{% endif %}{% endfor %}
 </urlset>

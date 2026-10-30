@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Josh Judge's Markdown-powered blog",
+  "description": "Josh Judge's writing.",
   "scripts": {
     "build": "eleventy",
-    "dev": "eleventy --serve --port=8788",
-    "check": "npm run build && node scripts/check.mjs"
+    "dev": "eleventy --serve --port=8788"
   },
-  "devDependencies": {"@11ty/eleventy": "^3.1.2"},
-  "engines": {"node": ">=22"}
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.2",
+    "gray-matter": "npm:@11ty/gray-matter@^1.0.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
 }

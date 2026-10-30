@@ -1,13 +1,13 @@
 ---
 layout: base.njk
-title: Josh Judge
 ---
 <section class="page-header">
-    <h1 class="page-title">Curiosity, mostly.</h1>
-    <p class="subtitle">Notes on building software, useful technology, and whatever else catches my attention.</p>
+    <h1 class="page-title">{{ heading }}</h1>
+    <p class="subtitle">{{ description }}</p>
+    {% if content %}<div class="prose">{{ content | safe }}</div>{% endif %}
 </section>
 <section id="writing" class="writing">
-    <h2>Writing</h2>
+    <h2>{{ site.writing_label }}</h2>
     <ul class="article-list">
         {% for post in collections.posts %}
         <li>
