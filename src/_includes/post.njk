@@ -5,7 +5,7 @@ layout: base.njk
     <header class="page-header post-header">
         <time class="article-date" datetime="{{ date | isoDate }}">{{ date | dateLabel }}</time>
         <h1 class="page-title">{{ title }}</h1>
-        {% if description %}<p class="subtitle">{{ description }}</p>{% endif %}
+        {% if subtitle %}<p class="subtitle">{{ subtitle }}</p>{% elif description and show_description != false %}<p class="subtitle">{{ description }}</p>{% endif %}
     </header>
     <div class="prose">{{ content | safe }}</div>
 </article>

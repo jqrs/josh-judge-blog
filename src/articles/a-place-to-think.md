@@ -1,20 +1,25 @@
 ---
-title: A place to think in public
-description: A small home for notes on software, technology, and the questions that stay with me.
+title: "[Your first article title]"
+description: "[A short summary for the writing list and feed.]"
+subtitle: "[An optional subtitle shown at the top of this article.]"
 date: 2026-10-29
 ---
-A blank page is a useful place to start. This is mine.
+[Your opening paragraph.]
 
-I'm Josh Judge. I wanted a simple home for writing: somewhere to collect ideas, follow questions, and leave a record of what I'm learning along the way.
+## [Your section heading]
 
-## What belongs here
+[Your main argument or observation.]
 
-Notes on building software. Observations about technology. Questions that take more than a quick conversation to work through.
+[Your supporting example, project, or experience.]
 
-Some pieces will be practical. Others will be unfinished thoughts that become clearer through writing. The common thread is curiosity about how things work and how to make them work better.
+**[A key point you want to emphasize.]**
 
-## Keeping it simple
+### [Your next section]
 
-A good blog doesn't need much between the reader and the words. A title, a date, a readable page, and a link to the next idea are enough.
+1. **[First point.]** [Your explanation.]
+2. **[Second point.]** [Your explanation.]
+3. **[Third point.]** [Your explanation.]
 
-That's the starting point here. More soon.
+[Your closing thought.]
+
+*[Your optional postscript.]*

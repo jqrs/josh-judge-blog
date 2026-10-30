@@ -6,7 +6,7 @@ permalink: /feed.xml
 <title>{{ site.name }}</title>
 <link>{{ site.url }}/</link>
 <description>{{ site.description }}</description>
-<language>en</language>
+<language>{{ site.language }}</language>
 {% for post in collections.posts %}<item>
 <title>{{ post.data.title }}</title>
 <link>{{ site.url }}{{ post.url }}</link>

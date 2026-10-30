@@ -1,28 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ site.language }}">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="{{ description or site.description }}">
-        <title>{{ title }}{% if title != site.name %} — {{ site.name }}{% endif %}</title>
+        <meta name="description" content="{{ seo_description or description or site.description }}">
+        <title>{{ browser_title or title }}{% if (browser_title or title) != site.name %} — {{ site.name }}{% endif %}</title>
         {% if not noindex %}<link rel="canonical" href="{{ site.url }}{{ page.url }}">{% else %}<meta name="robots" content="noindex">{% endif %}
         <meta property="og:type" content="{% if tags and 'post' in tags %}article{% else %}website{% endif %}">
         <meta property="og:title" content="{{ title }}">
-        <meta property="og:description" content="{{ description or site.description }}">
+        <meta property="og:description" content="{{ seo_description or description or site.description }}">
         <meta property="og:url" content="{{ site.url }}{{ page.url }}">
         <link rel="stylesheet" href="/style.css">
         <link rel="alternate" type="application/rss+xml" title="{{ site.name }}" href="/feed.xml">
     </head>
     <body>
         <header class="site-header">
-            <p class="site-title"><a href="/">{{ site.name }}<span>.</span></a></p>
-            <nav aria-label="Main navigation">
+            <p class="site-title"><a href="/">{{ site.name }}<span>{{ site.logo_suffix }}</span></a></p>
+            <nav aria-label="{{ site.navigation_label }}">
                 {% for item in site.navigation %}<a href="{{ item.url }}">{{ item.label }}</a>{% endfor %}
             </nav>
         </header>
         <main>{{ content | safe }}</main>
         <footer class="site-footer">
-            <p>&copy; {{ '' | year }} {{ site.footer_name }}</p>
+            <p>&copy; {{ site.footer_year or ('' | year) }} {{ site.footer_name }}</p>
+            {% if site.footer_html %}<div class="footer-note">{{ site.footer_html | safe }}</div>{% endif %}
         </footer>
     </body>
 </html>
