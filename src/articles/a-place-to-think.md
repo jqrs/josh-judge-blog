@@ -6,6 +6,8 @@ date: 2026-10-29
 ---
 [Your opening paragraph.]
 
+![Landscape placeholder](/photos/placeholder-landscape.svg "[Your inline photo subtitle.]")
+
 ## [Your section heading]
 
 [Your main argument or observation.]

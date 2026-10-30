@@ -4,6 +4,8 @@ description: "[A short introduction to Josh Judge.]"
 ---
 [Your biography.]
 
+![Portrait placeholder](/photos/placeholder-portrait.svg "[Your portrait subtitle.]")
+
 ## What I do
 
 [Your role, work, or current projects.]

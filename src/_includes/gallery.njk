@@ -1,0 +1,20 @@
+---
+layout: base.njk
+---
+<section>
+    <header class="page-header post-header">
+        <h1 class="page-title">{{ title }}</h1>
+        {% if description %}<p class="subtitle">{{ description }}</p>{% endif %}
+    </header>
+    {% if content %}<div class="prose">{{ content | safe }}</div>{% endif %}
+    <div class="photo-grid">
+        {% for photo in photos %}
+        <figure>
+            <a class="photo-link" href="{{ photo.src }}" data-photo data-caption="{{ photo.caption }}" data-alt="{{ photo.alt }}">
+                <img src="{{ photo.thumbnail or photo.src }}" alt="{{ photo.alt }}" loading="lazy" decoding="async">
+            </a>
+            {% if photo.caption %}<figcaption>{{ photo.caption }}</figcaption>{% endif %}
+        </figure>
+        {% endfor %}
+    </div>
+</section>

@@ -12,6 +12,7 @@
         <meta property="og:url" content="{{ site.url }}{{ page.url }}">
         <link rel="stylesheet" href="/style.css">
         <link rel="alternate" type="application/rss+xml" title="{{ site.name }}" href="/feed.xml">
+        <script src="/photos.js" defer></script>
     </head>
     <body>
         <header class="site-header">
@@ -21,6 +22,23 @@
             </nav>
         </header>
         <main>{{ content | safe }}</main>
+        <dialog id="photo-viewer" aria-label="{{ site.photo_viewer.label }}" data-separator="{{ site.photo_viewer.count_separator }}">
+            <div class="viewer-panel">
+                <div class="viewer-toolbar">
+                    <span data-viewer-count aria-live="polite"></span>
+                    <button type="button" data-viewer-close autofocus>{{ site.photo_viewer.close }}</button>
+                </div>
+                <figure class="viewer-figure">
+                    <img data-viewer-image alt="">
+                    <p data-viewer-error hidden>{{ site.photo_viewer.error }}</p>
+                    <figcaption data-viewer-caption aria-live="polite"></figcaption>
+                </figure>
+                <div class="viewer-navigation">
+                    <button type="button" data-viewer-previous>{{ site.photo_viewer.previous }}</button>
+                    <button type="button" data-viewer-next>{{ site.photo_viewer.next }}</button>
+                </div>
+            </div>
+        </dialog>
         <footer class="site-footer">
             <p>&copy; {{ site.footer_year or ('' | year) }} {{ site.footer_name }}</p>
             {% if site.footer_html %}<div class="footer-note">{{ site.footer_html | safe }}</div>{% endif %}
