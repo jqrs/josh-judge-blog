@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="{{ description or site.description }}">
+        <title>{{ title }}{% if title != site.name %} — {{ site.name }}{% endif %}</title>
+        {% if not noindex %}<link rel="canonical" href="{{ site.url }}{{ page.url }}">{% else %}<meta name="robots" content="noindex">{% endif %}
+        <meta property="og:type" content="{% if tags and 'post' in tags %}article{% else %}website{% endif %}">
+        <meta property="og:title" content="{{ title }}">
+        <meta property="og:description" content="{{ description or site.description }}">
+        <meta property="og:url" content="{{ site.url }}{{ page.url }}">
+        <link rel="stylesheet" href="/style.css">
+        <link rel="alternate" type="application/rss+xml" title="Josh Judge" href="/feed.xml">
+    </head>
+    <body>
+        <header class="site-header">
+            <p class="site-title"><a href="/">Josh Judge<span>.</span></a></p>
+            <nav aria-label="Main navigation">
+                <a href="/#writing">Writing</a>
+            </nav>
+        </header>
+        <main>{{ content | safe }}</main>
+        <footer class="site-footer">
+            <p>&copy; {{ '' | year }} Josh Judge</p>
+        </footer>
+    </body>
+</html>

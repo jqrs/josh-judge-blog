@@ -1,0 +1,22 @@
+---
+layout: base.njk
+title: Josh Judge
+---
+<section class="page-header">
+    <h1 class="page-title">Curiosity, mostly.</h1>
+    <p class="subtitle">Notes on building software, useful technology, and whatever else catches my attention.</p>
+</section>
+<section id="writing" class="writing">
+    <h2>Writing</h2>
+    <ul class="article-list">
+        {% for post in collections.posts %}
+        <li>
+            <article>
+                <time class="article-date" datetime="{{ post.date | isoDate }}">{{ post.date | dateLabel }}</time>
+                <h3><a href="{{ post.url }}">{{ post.data.title }}</a></h3>
+                <p>{{ post.data.description }}</p>
+            </article>
+        </li>
+        {% endfor %}
+    </ul>
+</section>
