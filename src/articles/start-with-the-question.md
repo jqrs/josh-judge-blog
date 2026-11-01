@@ -1,20 +1,50 @@
 ---
-title: "[Your second article title]"
-description: "[A short summary of your second article.]"
-show_description: false
-date: 2026-10-28
+title: "The dangerous audio error may be one word long"
+description: "How to evaluate an ambient scribe from sound to signed note, including noise, speaker mix-ups, and missing clinical facts."
+subtitle: "A field guide to paired audio tests and claim-level review for healthcare AI teams."
+date: 2026-10-31
 ---
-[Your opening paragraph introducing a book, idea, or question.]
+*A sample article. Examples are synthetic; the cited studies describe their own test settings.*
 
-> **[Speaker or author]:** [Your quote or passage.]
->
-> *[Your attribution or context.]*
+Imagine a simulated visit in which a patient says they are **not** taking a medication. One acoustic condition preserves the negation; another masks it. Both transcripts may be mostly correct. The downstream note can still change the meaning of a sentence that matters.
 
-[Your response or analysis, with **emphasis**, *italics*, and a [source link](https://example.com).]
+Word error rate is useful for understanding transcription quality. It does not tell a health system which words were wrong, which speaker they belonged to, or whether an error survived into the draft a clinician reviewed. Evaluating an ambient scribe requires following those transformations all the way through.
 
-## [Your section heading]
+![A conceptual AI-generated illustration of headphones and an audio waveform on a laptop in a clinical workspace](/photos/clinical-audio-workspace.png "Conceptual illustration; generated for this sample article.")
 
-- [Your first observation.]
-- [Your second observation.]
+## Change the sound, hold the encounter constant
 
-[Your conclusion.]
+The 2026 [Beyond WER study](https://arxiv.org/abs/2606.05909) used paired versions of the same dialogues, introducing different acoustic noise while keeping the downstream configuration fixed. In its 272 OSCE-style dialogues, one stationary-noise condition increased word error rate by 0.71 percentage points while nearly doubling the study's unsafe-output rate. That is a finding from a controlled test set, not a rate to apply to a hospital's population.
+
+The valuable idea is the comparison. If the encounter changes at the same time as the microphone or background noise, a team cannot tell which difference caused the outcome. In a local evaluation, keep the case, gold facts, and model configuration fixed; vary one factor at a time: microphone distance, a second speaker, overlapping speech, room acoustics, or an audio dropout. Retain both the clean and changed versions as a pair.
+
+Use a reference recording for which trained reviewers have identified the facts that matter, their timing, and who said them. Then assess four artifacts where available: the source audio, the transcript with speaker turns, the generated draft, and the clinician-reviewed note. For a direct audio-to-note system that exposes no transcript, mark that intermediate step as unavailable; evaluate the audio and draft rather than inventing a transcript-based diagnosis of the failure.
+
+## An error can change shape between stages
+
+A sentence can be transcribed correctly but omitted from the note. A transcript error can be carried forward. A model can make a transcription error more consequential by adding a confident interpretation—or restore the intended meaning using surrounding context. Those are different engineering problems.
+
+The [2026 clinical-scribe evaluation from the Health, Inference, and Learning conference](https://proceedings.mlr.press/v333/latif26a.html) separates note facts, compares them with a clinician-authored reference, and checks candidate additions against the transcript. In that study, 92% of material initially labeled as added relative to the reference note was supported by the transcript. That does not mean every addition is safe; it shows why absence from a reference note alone is a poor definition of hallucination.
+
+I would record, at minimum, four claim-level outcomes:
+
+- **Omitted:** a reviewed, material fact is missing from the draft.
+- **Contradicted:** the draft changes a material fact, including a negation, time, dose, or laterality.
+- **Unsupported or misattributed:** the draft introduces a claim without adequate encounter evidence, or assigns one person's statement to another.
+- **Recovered:** an upstream transcription error is corrected downstream, with enough evidence to justify the correction.
+
+Separate an unsupported negative from an omission. A missing statement and an invented “denies” can both matter, but they point to different review and mitigation needs. Give reviewers the audio and timestamps; a transcript is evidence of what the recognizer produced, not independent proof of what was said.
+
+## Test the room next door
+
+A useful emerging failure mode is **incidental speech**. An October 2026 [preprint on clinical documentation and reasoning](https://arxiv.org/abs/2610.08585) examined deliberately inserted asides and background speech from another encounter. In 57 mock recorded consultations, background speech appeared in 48.2% of transcripts and contamination was detected in 5.3% of downstream notes generated by four open-weight models. The authors note that their controlled audio and short excerpts do not capture the full complexity of routine visits; those figures are not deployment prevalence estimates.
+
+Translate that result into paired cases: a relevant caregiver speaks, a clinician makes an aside, a television mentions a symptom, or a neighboring conversation becomes audible. The expected behavior is not simply “discard every third voice.” A caregiver may be the best source of a critical fact. The test should ask whether the system attributes a statement correctly, distinguishes the encounter from background material, and leaves uncertain attribution visible for review.
+
+## Make the score operational
+
+Report a small set of measures together: clinically significant omissions, contradictions, unsupported claims, and speaker-attribution errors per reviewed encounter; the number of relevant facts available for each measure; and the severity and review policy behind the labels. Show the paired change between clean and perturbed audio, along with case counts and uncertainty. Slice by setting, language, device, and speaker configuration when the sample is large enough to interpret; small slices need counts and careful review, not league tables.
+
+A central team can maintain the scoring protocol and adjudication rubric. Each hospital or clinic can add locally representative conditions—an inpatient handoff sounds different from an outpatient consultation—without merging every site's recordings into a shared pool. Use approved handling and retention controls for any real audio; synthetic cases are valuable for stress tests but do not establish production performance.
+
+Finally, measure the review step itself. A corrected draft shows that a problem was caught; an unchanged draft does not prove that it was safe. The evaluation should make it possible to ask what the model missed, what the clinician saw, and whether the workflow gave the reviewer a fair chance to catch it.
