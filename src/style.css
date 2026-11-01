@@ -232,6 +232,20 @@ a:hover {
     margin-top: 0.5rem;
 }
 
+/* Code examples */
+.prose pre {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    padding: 1rem 1.125rem;
+    border: 1px solid var(--border);
+    background: #f2f0eb;
+    font: 0.8rem/1.6 ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.prose code {
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
 .prose blockquote {
     margin: 1.75rem 0;
     padding-left: 1.25rem;

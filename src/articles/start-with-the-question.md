@@ -24,7 +24,7 @@ A sentence can be transcribed correctly but omitted from the note. A transcript 
 
 The [2026 clinical-scribe evaluation from the Health, Inference, and Learning conference](https://proceedings.mlr.press/v333/latif26a.html) separates note facts, compares them with a clinician-authored reference, and checks candidate additions against the transcript. In that study, 92% of material initially labeled as added relative to the reference note was supported by the transcript. That does not mean every addition is safe; it shows why absence from a reference note alone is a poor definition of hallucination.
 
-I would record, at minimum, four claim-level outcomes:
+Record at least four claim-level outcomes:
 
 - **Omitted:** a reviewed, material fact is missing from the draft.
 - **Contradicted:** the draft changes a material fact, including a negation, time, dose, or laterality.
@@ -39,10 +39,29 @@ A useful emerging failure mode is **incidental speech**. An October 2026 [prepri
 
 Translate that result into paired cases: a relevant caregiver speaks, a clinician makes an aside, a television mentions a symptom, or a neighboring conversation becomes audible. The expected behavior is not simply “discard every third voice.” A caregiver may be the best source of a critical fact. The test should ask whether the system attributes a statement correctly, distinguishes the encounter from background material, and leaves uncertain attribution visible for review.
 
+## Connect the audio trace to the note claim
+
+Give every encounter a stable evaluation identifier and keep the clean recording and each perturbation under that encounter. Where transcripts are available, align speaker turns and time ranges with reviewed facts and the claims in the draft:
+
+```yaml
+encounter_ref: audio-17
+condition: overlapping-speaker
+speaker: uncertain
+reference_fact: fact-4
+transcript_issue: missing-negation
+note_outcome: contradiction
+```
+
+The labels are an evaluation schema, not a substitute for replaying the source audio. Preserve separate references for the acoustic interval, recognizer output, note version, and reviewer decision. A direct audio-to-note model may not expose a transcript; record that step as unavailable rather than imputing a reason for its error.
+
+For each clean/noisy pair, compute the proportion of evaluated encounters that acquire at least one adjudicated material error absent from the clean run. Report the numerator, paired-encounter denominator, severity definition, and confidence interval alongside word error rate. If an encounter has several noise variants, treat the encounter—not each variant—as the independent unit when estimating uncertainty. Add separate denominators for supported facts, speaker attribution, and clinically meaningful omissions.
+
+Measure latency at the points users experience it: audio capture to a usable draft, and draft to clinician sign-off. Keep partial streaming text and final text distinct; a brief interim error that is corrected before the draft is produced differs from a material error that remains for review. Any real recordings and transcripts need approved access, retention, and review controls.
+
 ## Make the score operational
 
 Report a small set of measures together: clinically significant omissions, contradictions, unsupported claims, and speaker-attribution errors per reviewed encounter; the number of relevant facts available for each measure; and the severity and review policy behind the labels. Show the paired change between clean and perturbed audio, along with case counts and uncertainty. Slice by setting, language, device, and speaker configuration when the sample is large enough to interpret; small slices need counts and careful review, not league tables.
 
-A central team can maintain the scoring protocol and adjudication rubric. Each hospital or clinic can add locally representative conditions—an inpatient handoff sounds different from an outpatient consultation—without merging every site's recordings into a shared pool. Use approved handling and retention controls for any real audio; synthetic cases are valuable for stress tests but do not establish production performance.
+A small clinic can start with one workflow, a clinician reviewer, and a limited set of approved test recordings; request transcript and draft artifacts from the vendor where available. A larger system can maintain one scoring protocol while each site adds locally representative conditions—an inpatient handoff sounds different from an outpatient consultation—without merging every site's recordings into a shared pool. Use approved handling and retention controls for any real audio; synthetic cases are valuable for stress tests but do not establish production performance.
 
 Finally, measure the review step itself. A corrected draft shows that a problem was caught; an unchanged draft does not prove that it was safe. The evaluation should make it possible to ask what the model missed, what the clinician saw, and whether the workflow gave the reviewer a fair chance to catch it.

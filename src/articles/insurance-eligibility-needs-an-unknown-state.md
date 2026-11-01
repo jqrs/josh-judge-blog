@@ -26,6 +26,28 @@ For every evaluation case, preserve the payer and product context, service date,
 
 Keep the source of an answer visible. “The plan returned no authorization requirement,” “our local rule did not find a requirement,” and “the payer service was unavailable” describe different states. A workflow should not turn an API timeout into a confident statement that authorization is unnecessary.
 
+## Make uncertainty executable
+
+Represent each requirement as a structured result, with the policy version, evidence reference, and the reason a condition cannot be evaluated. For example:
+
+```yaml
+coverage_ref: Coverage/test-4
+service_ref: ServiceRequest/test-9
+policy_version: policy-2026-2
+requirement: requirement-3
+result: unknown
+evidence_ref: null
+next_step: request-review
+```
+
+This is an application contract, not a payer's actual API response. Preserve the original payer response and its timestamp separately. An unavailable endpoint, a policy that requires additional information, and a returned determination must remain distinguishable throughout the workflow.
+
+Do not implement a policy as a flat rule that treats any unknown field as an automatic denial. Requirements can include alternatives, exceptions, and precedence; encode the applicable logic explicitly and review it when a payer changes the policy. A language model may extract candidate requirements and supporting passages, but a reviewed rules layer should evaluate the configured logic and route unresolved cases. Eligibility, authorization status, and final payment are separate outputs.
+
+The [Da Vinci CRD implementation guide](https://hl7.org/fhir/us/davinci-crd/en/foundation.html) allows a client to handle a timed-out response asynchronously or abandon that call, and recognizes a need for more information as a valid response. Test the adapter against the payer's actual behavior and the agreement in force; do not convert a timeout into “no authorization required.”
+
+Build counterfactual pairs that change one variable: coverage effective date, requested service, policy version, or a single missing document. Check the selected policy, each requirement state, and the next action independently. Report wrong-policy selection and false certainty on unknown cases separately from overall three-class accuracy.
+
 ## Evaluate the package as well as the letter
 
 A 2026 [preprint on prior-authorization letters](https://arxiv.org/abs/2603.29366) evaluated generated letters across 45 physician-validated synthetic scenarios. Its secondary administrative review found missing details such as billing codes and requested authorization duration despite strong clinical content in the study's scenarios. That is a reminder that a good narrative and a submission-ready package are separate outcomes.
@@ -40,6 +62,6 @@ A useful harness checks both the content and the operational state:
 4. Was the request actually received, and is the returned status accurately represented?
 5. Is a human owner assigned when evidence is missing or the result is disputed?
 
-For a regional provider group, start with a high-volume service and the plans that account for most of its work. For a large network, keep a common evidence schema and route policy exceptions to local specialists who understand the contract and workflow. Report unknown-state recognition, wrong-policy use, missing fields, and handoff completion separately from overall accuracy.
+For a small clinic or regional provider group, start with a high-volume service and the plans that account for most of its work. For a large network, keep a common evidence schema and route policy exceptions to local specialists who understand the contract and workflow. Report unknown-state recognition, wrong-policy use, missing fields, and handoff completion separately from overall accuracy.
 
 The most valuable feature may be the ability to stop with a precise question: **which fact is missing, where should it come from, and who can resolve it?**

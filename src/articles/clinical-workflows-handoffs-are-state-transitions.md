@@ -42,10 +42,29 @@ Define the evidence needed for each status. A queue receipt, an individual's ack
 
 For high-impact actions, the review boundary should carry the evidence that was approved and identify when it changed. Where the destination cannot provide a reliable acknowledgment, the system should record that limitation and route to the agreed manual process instead of asserting certainty.
 
+## Implement the handoff contract
+
+Treat each transition as an event with a task identifier, patient and encounter scope, previous state, destination, actor, source version, and timestamp. A compact application record might look like:
+
+```yaml
+task_ref: handoff-17
+encounter_ref: Encounter/test-17
+state: received
+owner: queue-care-team
+source_revision: "4"
+acknowledged: false
+```
+
+These are application fields, not a complete FHIR resource. If the integration uses [FHIR Task](https://hl7.org/fhir/R4/task.html), map the local lifecycle to the server's supported status and owner semantics rather than assuming that a transport receipt means a clinician accepted responsibility.
+
+Persist transitions durably, deduplicate incoming events, and use version checks or another concurrency control when two workers update the same task. A correction to the underlying evidence should create a new revision and notify the responsible workflow; it should not silently replace what a reviewer saw. Handle late and out-of-order messages, and retain the prior state for audit under the organization's access and retention rules.
+
+Test queue unavailability, a recipient declining ownership, a task completed while a retry is in flight, and a transfer to a site with different routing. A timeout should create an observable escalation or unresolved state under locally approved rules; it should not close the task automatically. Track acknowledged handoffs over delivered handoffs, unowned open tasks, reassignments, and time from delivery to acceptance, with counts by site and queue. Measure clinical outcomes separately from these process indicators.
+
 ## Measure what matters to the receiving team
 
 Track outcomes in context: time to acknowledgment, unowned or overdue tasks, incorrect routing, changes after handoff, and cases requiring rework. Pair those process measures with reviewer assessment of the information received. A low average handoff time can coexist with a small number of unresolved tasks that matter greatly.
 
-A medium-sized organization can begin with a single transition and a named clinical owner for exceptions. A large organization can keep one lifecycle schema while allowing sites to configure their own queues, escalation contacts, and operating hours. Test the same change, cancellation, and acknowledgment cases at every boundary.
+A small clinic or medium-sized organization can begin with a single transition and a named clinical owner for exceptions. A large organization can keep one lifecycle schema while allowing sites to configure their own queues, escalation contacts, and operating hours. Test the same change, cancellation, and acknowledgment cases at every boundary.
 
 The goal is continuity that is observable: not just what the assistant wrote, but who received it, what changed, and whether the next step happened.

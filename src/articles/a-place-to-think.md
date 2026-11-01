@@ -43,11 +43,30 @@ The harness can use a stable operation identifier, a durable record of attempted
 
 A related test is stale approval. Freeze the draft and its supporting record versions, simulate a clinician changing an important source field, then resume. Does the system detect the change and send the work back for review, or does it quietly submit an answer approved against an earlier chart? Where the server supports version-aware updates, an `If-Match` precondition can help expose conflicts; the workflow still needs an explicit plan for resolving them.
 
+## Implement the write boundary
+
+The agent should propose an action; a deterministic service should validate the tenant, patient, encounter, authorized action, and approval state before calling the EHR. Store the operation in an application ledger before dispatch. A minimal sandbox record might look like this:
+
+```yaml
+operation_id: op-42
+encounter_ref: Encounter/test-17
+intent: create-referral-draft
+source_revision: "7"
+review: approved
+outcome: unknown
+```
+
+`unknown` means the request may have reached the destination but the result is not confirmed. Give each intended operation a stable key scoped to the tenant and action, and enforce uniqueness in the ledger. Persist identifiers and versions needed for reconciliation in an access-controlled store; ordinary traces should avoid raw patient details.
+
+Where the destination supports it, conditional creation can help prevent duplicate resources; version-aware updates using `If-Match` can detect stale writes. The [FHIR R4 HTTP specification](https://hl7.org/fhir/R4/http.html) defines these as different interactions. Check the server's advertised capabilities and behavior: conditional create is not a universal idempotency guarantee, and an EHR may expose different mechanisms by resource type. If the destination cannot safely identify or search for a prior write, stop automatic retry and route the uncertain outcome for reconciliation.
+
+At approval time, compare the evidence and policy versions the reviewer saw with the versions used for the write. On a version conflict, refresh the evidence and return the proposal for review; do not silently replay an old approval against a new chart. Test both timeout-before-commit and timeout-after-commit, plus concurrent attempts from two workers.
+
 ## Build two scorecards, not one average
 
 The first scorecard describes **the outcome**: correct, incomplete, safely deferred, or unsafe. The second describes **the path**: wrong identity, stale evidence, unauthorized action, duplicate write, missing evidence, or misleading confirmation. Keep the severe failures visible even if an aggregate score improves.
 
-For a medium-sized organization, start with one high-volume workflow and a small set of clinician-reviewed synthetic cases. For a larger network, run the same scenario contract against each site's adapter, identity mapping, terminology, and escalation route. Share the test schema and scoring rules; don't assume a pass at one site proves a second site's configuration is safe.
+For a small clinic or medium-sized organization, start with one high-volume workflow and a small set of clinician-reviewed synthetic cases. For a larger network, run the same scenario contract against each site's adapter, identity mapping, terminology, and escalation route. Share the test schema and scoring rules; don't assume a pass at one site proves a second site's configuration is safe.
 
 Pin the prompt, tool schemas, adapter version, policy configuration, and record snapshot for every comparison. Repeat nondeterministic runs and retain the distribution rather than selecting the most favorable trace. When an integration changes, replay the cases that cross its boundary—even if the underlying model has not changed.
 

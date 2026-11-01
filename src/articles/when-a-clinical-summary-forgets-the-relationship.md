@@ -6,7 +6,7 @@ date: 2026-10-30
 ---
 A chart summary can contain every important noun and still be wrong.
 
-Consider a record in which a symptom began **after** a treatment change, and that a clinician documented a possible relationship. A compressed summary retains the symptom, the treatment, and the date of the visit, but drops who made the connection and when. The final answer sounds grounded because the right concepts are present. The relationship that made them clinically meaningful is gone.
+Consider a record in which a symptom began **after** a treatment change and a clinician documented a possible relationship. A compressed summary retains the symptom, the treatment, and the date of the visit, but drops who made the connection and when. The final answer sounds grounded because the right concepts are present. The relationship that made them clinically meaningful is gone.
 
 For teams building retrieval, summarization, or clinical question-answering systems, that is a different failure from simply failing to retrieve a document. It occurs between having the source and creating the representation on which the answer depends.
 
@@ -40,10 +40,28 @@ For each material output claim, capture the source or structured event, the time
 
 Run these checks separately from a text-similarity score. A summary that uses different wording may preserve the right meaning. A summary that shares almost every word with the source may still reverse a temporal relationship.
 
+## Build a point-in-time evidence trace
+
+At ingestion, distinguish the time an event occurred from the time the application could first use it. For a historical replay, the evaluation harness can record:
+
+```yaml
+fact_ref: event-17
+occurred_at: "09:00Z"
+available_at: "11:08Z"
+decision_at: "10:00Z"
+eligible_for_prompt: false
+```
+
+The timestamps above describe the evaluation contract. Future information may be used by the evaluator to assess the scenario, but it must not enter the model's retrieval context before the cutoff. `lastUpdated` or a note's authored date is not automatically proof of when every downstream application saw the record. If historical availability cannot be reconstructed, label the replay's temporal fidelity as unknown.
+
+For each generated claim, retain the evidence identifier and version, the actual retrieved span or structured field, the representation passed to the model, and the decision-time cutoff. Keep sensitive evidence in the access-controlled clinical environment; routine telemetry can record opaque references and versions. On an amended record, invalidate or rebuild affected summaries and evaluate the answer again. Preserve the earlier trace so a reviewer can distinguish a change in the source from a change in the model.
+
+Score retrieval recall against an independently annotated set of required evidence, then score claim support against the material actually available to the model. Measure omission against a separate clinician-annotated fact set; evaluating only claims the model chose to mention cannot detect missing facts. Report temporal errors, unsupported claims, appropriate deferrals, and reviewer disagreement separately. A judge model can help triage cases, but its error rates must be measured against human review on the relevant case mix.
+
 ## Keep external benchmarks in their lane
 
 Public benchmarks are useful for comparing candidates and finding failure modes. They are not a substitute for a health system's own case mix, interfaces, and review process. Even benchmark versions can change the question being asked: the October 2026 revision of [HealthAgentBench](https://arxiv.org/abs/2606.31179v2) describes 75 tasks across nine categories, with binary scoring and one scored attempt per task for the reported comparison. Its mix spans more than clinical text alone. A score on that suite should not be treated as a measured success rate for a local chart-summary workflow.
 
 For a meaningful local comparison, freeze the case set, scoring rubric, retrieval index, available-record cutoff, model identifier, prompt, and adapter version. Report evidence support, temporal accuracy, appropriate deferral, and workflow outcome separately. Include case counts and uncertainty, and review a sample of disagreements between automated graders and clinicians. If an externally hosted model does not expose a precise snapshot, record the version information the provider actually makes available and the run time; do not imply you can reproduce hidden weights.
 
-A medium-sized organization can start with one specialty and a carefully adjudicated set of longitudinal questions. A large system can share a rubric while each site supplies cases and measures local data availability. In both cases, the point is to make the *information path* observable: what was available, what was retrieved, what survived compression, and what the answer claimed.
+A small clinic or medium-sized organization can start with one specialty and a carefully adjudicated set of longitudinal questions. A large system can share a rubric while each site supplies cases and measures local data availability. In both cases, the point is to make the *information path* observable: what was available, what was retrieved, what survived compression, and what the answer claimed.

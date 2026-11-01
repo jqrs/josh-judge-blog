@@ -26,6 +26,24 @@ Test both sides. A technically correct queue assignment is incomplete if the rec
 
 Use controlled failures: the scheduler is unavailable, the requested slot disappears, identity cannot be resolved, or the intended queue is closed. The assistant should distinguish **requested**, **confirmed**, **pending**, and **not completed**. If an action's outcome is uncertain, it should say so in language a patient can understand and route the work according to the local process.
 
+## Build an action and identity boundary
+
+Maintain the conversation state independently from tool execution. For each action, retain the verified identity context, the patient's request, the tool request identifier, the returned result, and any handoff status. A minimal internal state can look like:
+
+```yaml
+conversation_ref: session-17
+identity_state: verified
+intent: reschedule
+booking_state: outcome-unknown
+handoff_state: queued
+```
+
+The response composer should be constrained by confirmed state: `outcome-unknown` cannot become “your appointment was changed.” When a tool times out after submission, reconcile the booking or route it to a person before offering a confirmation. If the EHR or scheduling system cannot be queried reliably, retain the uncertainty and use the organization's approved fallback.
+
+Authentication of a session and authority to act for a particular patient are distinct checks. Test proxy access, a user switching the subject of a conversation, and cases where identity cannot be established. A recognized voice or a name in the message is not sufficient by itself to establish identity. Keep sensitive content out of ordinary observability logs; link the trace to an access-controlled record instead.
+
+For each test episode, assert both the patient-visible wording and the actual tool state. Include a changed slot between search and booking, a failed queue delivery, a duplicate submission, and a concern introduced after the original administrative request. Clinical escalation logic and instructions must come from the organization's approved pathway, with a clear fallback if a receiving service is unavailable. An agent should not infer that a message was read or that a person accepted responsibility merely because it was sent.
+
 ## Measure the handoff after the message
 
 A 2026 [observational report on telemedicine communication support](https://www.frontiersin.org/journals/digital-health/articles/10.3389/fdgth.2026.1864704/full) describes a system in which staff reviewed suggested messages before sending. Its authors note that the study did not establish user experience or workload impact through structured assessments. That distinction matters: message acceptance is an operational signal, not a direct measure of patient understanding, clinical safety, or saved time.
@@ -42,6 +60,6 @@ Review a sample of cases where automated scoring and clinicians disagree. Report
 
 ## Scale the evaluation with the organization
 
-A medium-sized provider group can test a single service line with staff who handle scheduling and escalation every day. A larger organization can share a common episode format while testing each site's queue, service hours, language support, identity process, and destination system. The same wording may be safe in one workflow and misleading in another if the underlying handoff is different.
+A small clinic or medium-sized provider group can test a single service line with staff who handle scheduling and escalation every day. A larger organization can share a common episode format while testing each site's queue, service hours, language support, identity process, and destination system. The same wording may be safe in one workflow and misleading in another if the underlying handoff is different.
 
 The design target is a conversation whose promises match the system's state, whose unanswered questions remain visible, and whose handoff can be followed to a responsible person.

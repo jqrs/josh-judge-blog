@@ -31,12 +31,32 @@ A fifth outcome—**needs clarification**—is often operationally important. It
 
 The 2026 [Symphony medical-coding paper](https://arxiv.org/abs/2603.29709) describes predictions linked to supporting text spans. Span-level evidence is a useful starting point for an audit, but a highlighted sentence still needs to support the proposed code in context. A model's explanation is a claim to verify, not proof that it applied the right coding convention.
 
+## Build an evidence-bearing coding candidate
+
+Keep code selection separate from the rules that validate it. A candidate record should identify the encounter, coding system and edition, proposed code, evidence, and the review state. For example, an application-level review record can carry:
+
+```yaml
+case_ref: case-17
+code_system: ICD-10-CM
+code_edition: FY-2026
+candidate: candidate-1
+source_ref: note-12
+source_revision: "3"
+review_state: needs-review
+```
+
+Associate each candidate with the source document's version and supporting text span, including surrounding context and conflicting passages. A character offset alone is fragile: normalization or a note amendment can move the span. Store the source version and a content fingerprint, and invalidate the association if the underlying text changes. Keep record content in approved, access-controlled systems rather than copying it into general application logs.
+
+Before presenting a candidate, check that it exists in the configured edition and that the relevant encounter, documentation, and source version are available. An LLM can propose and explain a candidate; a rules layer and qualified reviewer must determine whether the documentation and applicable coding conventions support it. If information is missing, create a clarification work item rather than filling the gap.
+
+For evaluation, independently adjudicate a subset of both suggestions and omissions. Evidence-supported precision is supported suggestions divided by reviewed suggestions; estimate missed-code recall only against a separately annotated reference set. If the audit oversamples disagreements, report that sampling and do not treat its precision as the rate for all encounters. Segment by specialty and code frequency, with counts and reviewer time alongside scores.
+
 ## Reproduce the decision environment
 
 A fair retrospective replay should show the model the information available at the original decision point. Later amendments, corrected claims, and subsequent encounters can change what looks obvious in hindsight. Preserve the applicable coding edition and the distinction between a diagnosis, a procedure performed, a requested service, and a rule inferred from a payer document.
 
 Measure candidate recall and evidence-supported precision together. A system that proposes every possible code can achieve high recall while creating an unusable review queue. Report the number of proposed codes per encounter, the proportion needing clarification, reviewer time, and unsupported additions by specialty. Evaluate both **overcoding and undercoding**; an apparent revenue opportunity is not evidence of an appropriate charge.
 
-At scale, use one adjudication rubric across the organization and stratify the results by site, specialty, note type, and code frequency. A medium-sized group can start with one service line and a double-reviewed set of disagreements. A larger system can add a centralized audit protocol while preserving the local context—provider documentation patterns, workflows, and the code set in force on each service date.
+At scale, use one adjudication rubric across the organization and stratify the results by site, specialty, note type, and code frequency. A small clinic or medium-sized group can start with one service line and a double-reviewed set of disagreements. A larger system can add a centralized audit protocol while preserving the local context—provider documentation patterns, workflows, and the code set in force on each service date.
 
 The strongest coding assistant is not the one that never disagrees with the past. It is the one that makes disagreements inspectable, preserves uncertainty, and gives qualified reviewers enough evidence to reach a supported decision.

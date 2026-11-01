@@ -34,12 +34,31 @@ When an analyst reviews a proposed pattern, ask them to record:
 
 The cluster summary can organize the investigation. It should not invent an adjustment rationale or turn an estimated payment gap into confirmed recoverable revenue.
 
+## Model remittances as events
+
+Keep the original claim line and each subsequent submission, remittance, reversal, and correction as linked events. Where available, ingest the electronic remittance advice and its adjustment and remark information; [CMS describes the 835 remittance format and related codes](https://www.cms.gov/medicare/coding-billing/electronic-billing/health-care-payment-remittance-advice). Do not overwrite an earlier denial when a corrected claim or later payment arrives.
+
+```yaml
+claim_ref: claim-42
+line_ref: line-2
+claim_version: "2"
+event_type: remittance-posted
+remittance_ref: remit-8
+as_of_status: partially-paid
+```
+
+The identifiers above describe an internal event contract, not an X12 transaction. Normalize payer-specific fields while preserving the original adjustment codes and source reference. Link a reversal to the payment it reverses; deduplicate reprocessed files by a stable source identifier. If a reliable line-level match is unavailable, keep the ambiguity visible for manual review.
+
+Calculate expected payment against the contract and service-date context that actually applies. Suppress or separately classify ratios when the expected amount is zero, unavailable, or affected by bundling; otherwise one bad denominator can manufacture a large apparent underpayment. Keep patient responsibility, contractual adjustments, payer payment, and later reversals distinct when building features.
+
+For a denial-prediction model, define the prediction time before selecting features. An adjustment code that appears only after adjudication is legitimate for retrospective clustering but leaks the answer into a pre-submission denial predictor. Evaluate on later claim cohorts, retain unresolved appeals as pending, and report outcome maturity and counts by payer and service line. A denial prediction is a forecast of a payer decision, not a judgment that the decision was correct.
+
 ## Evaluate what the team can act on
 
 In [HealthAdminBench](https://arxiv.org/abs/2604.09937), administrative agents work across an EHR, payer portals, and a fax environment, with tasks that include appeals and denials. The benchmark emphasizes verifiable completion across the workflow, not just a well-written explanation. Its simulated environment is a testbed, not a measure of any organization's recovery rate.
 
 A local evaluation can follow the same principle. Measure whether a proposed work item points to the correct line and history, whether the supporting evidence is accessible, and whether a reviewer can verify the rationale. Track the disposition and the work consumed: investigation time, false leads, duplicated work, missed filing windows, and the number of cases that remain unresolved at the observation cutoff.
 
-For a medium-sized organization, an actionable starting point is one service line and a small number of high-volume adjustment patterns. A large network can compare the same pattern definition across facilities, then inspect differences in contracts and operating processes before applying a shared fix. Keep rare, high-impact denials available for individual review even when they do not form a dense cluster.
+For a small clinic or medium-sized organization, an actionable starting point is one service line and a small number of high-volume adjustment patterns. A large network can compare the same pattern definition across facilities, then inspect differences in contracts and operating processes before applying a shared fix. Keep rare, high-impact denials available for individual review even when they do not form a dense cluster.
 
 The objective is a shorter path from **observable pattern** to **testable explanation** to **verified action**. A model can help organize the evidence; it cannot establish causality merely by giving a cluster a persuasive name.
