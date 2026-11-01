@@ -4,13 +4,11 @@ description: "How to evaluate an ambient scribe from sound to signed note, inclu
 subtitle: "A field guide to paired audio tests and claim-level review for healthcare AI teams."
 date: 2026-10-31
 ---
-*A sample article. Examples are synthetic; the cited studies describe their own test settings.*
-
 Imagine a simulated visit in which a patient says they are **not** taking a medication. One acoustic condition preserves the negation; another masks it. Both transcripts may be mostly correct. The downstream note can still change the meaning of a sentence that matters.
 
 Word error rate is useful for understanding transcription quality. It does not tell a health system which words were wrong, which speaker they belonged to, or whether an error survived into the draft a clinician reviewed. Evaluating an ambient scribe requires following those transformations all the way through.
 
-![A conceptual AI-generated illustration of headphones and an audio waveform on a laptop in a clinical workspace](/photos/clinical-audio-workspace.png "Conceptual illustration; generated for this sample article.")
+![Headphones and an audio waveform on a laptop in a clinical workspace](/photos/clinical-audio-workspace.png "Evaluating audio at the point where speech becomes a clinical note.")
 
 ## Change the sound, hold the encounter constant
 

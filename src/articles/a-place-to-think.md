@@ -4,15 +4,13 @@ description: "A practical way to test tool use, stale data, and interrupted clin
 subtitle: "Why a healthcare agent's harness should be evaluated at the boundaries where information and responsibility change."
 date: 2026-11-01
 ---
-*A sample article. The workflow below is fictional; research findings are linked to their sources.*
-
 A referral assistant reads a chart, prepares a draft, and tells a coordinator that the request is ready. Its final message is accurate. A conventional evaluation gives the run a pass.
 
 But suppose the specialist's office changed the referral status while the assistant was working. Or the tool timed out after creating the draft, and the retry created a second one. Or the agent summarized the right patient while placing the work item in the wrong encounter. The output can sound reassuring while the system around it is wrong.
 
 That gap between a plausible response and a verified state transition is becoming an important design problem for healthcare AI. At the size of a regional system or a national provider network, it is also an integration problem: the same agent may cross scheduling, identity, messaging, clinical documentation, and human review, each with different failure modes.
 
-![A conceptual AI-generated illustration of an engineering workstation overlooking a clinical setting](/photos/agent-harness-workspace.png "Conceptual illustration; generated for this sample article.")
+![An engineering workstation overlooking a clinical setting](/photos/agent-harness-workspace.png "Evaluating the systems that connect AI agents to clinical workflows.")
 
 ## The benchmark is moving into the workflow
 
@@ -24,7 +22,7 @@ The practical implication is to evaluate the *harness*—the surrounding code th
 
 ## Score the handoffs, not just the ending
 
-Consider a fictional referral-preparation task in a sandbox. The agent should collect relevant information, create one draft for the correct encounter, and route it for human review. It should not submit an order or tell the patient that an appointment is confirmed.
+Consider a referral-preparation task in a sandbox. The agent should collect relevant information, create one draft for the correct encounter, and route it for human review. It should not submit an order or tell the patient that an appointment is confirmed.
 
 For each run, keep a compact **handoff record**:
 

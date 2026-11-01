@@ -4,15 +4,13 @@ description: "A benchmark design for testing clinical text, temporal cutoffs, an
 subtitle: "Why retrieval and memory need their own evaluation before an answer is graded."
 date: 2026-10-30
 ---
-*A sample article. The scenario and evaluation design are illustrative; cited research is linked below.*
-
 A chart summary can contain every important noun and still be wrong.
 
-A fictional record says a symptom began **after** a treatment change, and that a clinician documented a possible relationship. A compressed summary retains the symptom, the treatment, and the date of the visit, but drops who made the connection and when. The final answer sounds grounded because the right concepts are present. The relationship that made them clinically meaningful is gone.
+Consider a record in which a symptom began **after** a treatment change, and that a clinician documented a possible relationship. A compressed summary retains the symptom, the treatment, and the date of the visit, but drops who made the connection and when. The final answer sounds grounded because the right concepts are present. The relationship that made them clinically meaningful is gone.
 
 For teams building retrieval, summarization, or clinical question-answering systems, that is a different failure from simply failing to retrieve a document. It occurs between having the source and creating the representation on which the answer depends.
 
-![A conceptual AI-generated illustration of layered documents beside a clinical timeline on a laptop](/photos/longitudinal-records-workspace.png "Conceptual illustration; generated for this sample article.")
+![Layered documents beside a clinical timeline on a laptop](/photos/longitudinal-records-workspace.png "A longitudinal record carries facts, timing, and the relationships between events.")
 
 ## A small probe with a large engineering implication
 
@@ -26,7 +24,7 @@ A sensible local test should therefore keep the original record, the retrieved m
 
 For a retrospective text evaluation, define **what the system could have known when it answered**. A laboratory result may have a collection time, a result time, and an interface arrival time. A note may describe an event on Monday but be signed on Wednesday. Filtering on only one timestamp can accidentally give the model information that was unavailable at the decision point.
 
-Create a fictional, time-indexed case with a cutoff. Then run three variants:
+Create a time-indexed test case with a cutoff. Then run three variants:
 
 1. **Available evidence:** include only information the application could access at that cutoff. The expected answer should reflect the uncertainty at that moment.
 2. **Later evidence:** advance the cutoff and add a new result or corrected note. The expected answer may change, with its evidence and timing made explicit.
